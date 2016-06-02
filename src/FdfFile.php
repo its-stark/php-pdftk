@@ -56,7 +56,26 @@ FDF;
         foreach ($data as $key=>$value) {
             // Create UTF-16BE string encode as ASCII hex
             // See http://blog.tremily.us/posts/PDF_forms/
-            $utf16Value = mb_convert_encoding($value,'UTF-16BE', $encoding);
+			//check if value ist array, if it is check wich format should be used
+			$utf16Value = "";
+			if(is_array($value)){
+				//string (text input)
+				$utf16Value = mb_convert_encoding($value['text'], 'UTF-16BE', $encoding);
+				// Escape parenthesis
+            	$utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
+				if($value['kind'] == 1){
+					$utf16Value = "/".$utf16Value;
+				}else{
+					$utf16Value = "(".$utf16Value.")";	
+				}
+			}else{
+				//string (text input)
+				$utf16Value = mb_convert_encoding($value,'UTF-16BE', $encoding);
+				// Escape parenthesis
+            	$utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
+				$utf16Value = "(".$utf16Value.")";
+			}
+            
 
             /* Also create UTF-16BE encoded key, this allows field names containing
              * german umlauts and most likely many other "special" characters.
@@ -64,9 +83,8 @@ FDF;
              */
             $utf16Key = mb_convert_encoding($key,'UTF-16BE', $encoding);
 
-            // Escape parenthesis
-            $utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
-            $fields .= "<</T(".chr(0xFE).chr(0xFF).$utf16Key.")/V(".chr(0xFE).chr(0xFF).$utf16Value.")>>\n";
+            
+            $fields .= "<</T(".chr(0xFE).chr(0xFF).$utf16Key.")/V".chr(0xFE).chr(0xFF).$utf16Value.">>\n";
         }
 
         // Use fwrite, since file_put_contents() messes around with character encoding
