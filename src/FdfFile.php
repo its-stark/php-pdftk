@@ -54,9 +54,9 @@ FDF;
 
         $fields = '';
         foreach ($data as $key=>$value) {
-            // Create UTF-16BE string encode as ASCII hex
+             // Create UTF-16BE string encode as ASCII hex
             // See http://blog.tremily.us/posts/PDF_forms/
-			//check if value ist array, if it is check wich format should be used
+            //check if value ist array, if it is check wich format should be used
 			$utf16Value = "";
 			if(is_array($value)){
 				//string (text input)
@@ -64,27 +64,26 @@ FDF;
 				// Escape parenthesis
             	$utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
 				if($value['kind'] == 1){
-					$utf16Value = "/".$utf16Value;
+					$utf16Value = "/".chr(0xFE).chr(0xFF).$utf16Value;
 				}else{
-					$utf16Value = "(".$utf16Value.")";	
+					$utf16Value = "(".chr(0xFE).chr(0xFF).$utf16Value.")";	
 				}
 			}else{
 				//string (text input)
 				$utf16Value = mb_convert_encoding($value,'UTF-16BE', $encoding);
 				// Escape parenthesis
             	$utf16Value = strtr($utf16Value, array('(' => '\\(', ')'=>'\\)'));
-				$utf16Value = "(".$utf16Value.")";
+				$utf16Value = "(".chr(0xFE).chr(0xFF).$utf16Value.")";
 			}
-            
-
+			
             /* Also create UTF-16BE encoded key, this allows field names containing
              * german umlauts and most likely many other "special" characters.
              * See issue #17 (https://github.com/mikehaertl/php-pdftk/issues/17)
              */
             $utf16Key = mb_convert_encoding($key,'UTF-16BE', $encoding);
-
-            
-            $fields .= "<</T(".chr(0xFE).chr(0xFF).$utf16Key.")/V".chr(0xFE).chr(0xFF).$utf16Value.">>\n";
+            // Escape parenthesis
+            //var_dump($utf16Value);
+            $fields .= "<</T(".chr(0xFE).chr(0xFF).$utf16Key.")/V".$utf16Value.">>\n";
         }
 
         // Use fwrite, since file_put_contents() messes around with character encoding

@@ -1,0 +1,53 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Unbenanntes Dokument</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.css">
+<style>
+	body{
+		background-color:#1C232B;	
+	}
+	.flip-clock-divider .flip-clock-label{
+		color:white;	
+		text-transform:uppercase;
+		font-size:16px;
+		left:0px;
+		right:0px !important;
+		width: 180px;
+	}
+	.flip-clock-wrapper ul li a div div.inn{
+		background-color:#111A21;
+	}
+	.flip-clock-dot{
+		display:none;
+		background-color:#111A21;
+	}
+	.flip-clock-divider.days .flip-clock-label{
+		width:140px;	
+	}
+</style>
+</head>
+
+<body>
+	<br/>
+	<div class="your-clock"></div>
+
+	<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/flipclock/0.7.8/flipclock.js"></script>
+    <script>
+		var now = new Date();
+		var then = new Date(2016, 11, 14, 23, 59, 0, 0);
+		console.log(now);
+		console.log(then);
+		var diff = Math.round((then - now)/1000);
+		console.log(diff);
+		console.log(diff/60/60/24);
+		var clock = $('.your-clock').FlipClock(diff,{ 
+			clockFace: 'DailyCounter',
+			countdown: true,
+			language:'de-de'
+		});
+	</script>
+</body>
+</html>
